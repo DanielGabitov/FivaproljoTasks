@@ -27,26 +27,23 @@ public:
 
     void add_name_of_game();
 
-    void set_inet_type_background();
+  void init_connection_type_buttons();
 
-    void set_connection_type_buttons();
-
-    void set_client_window();
+    void init_client_window();
 
     unsigned short get_server_port() { return serverPort = server_port->text().toShort(); }
-
-    //void set_client_window();
 
 public slots:
     void run_menu();
 
-    void init_inet_type_window();
-
+    void run_inet_type_window();
+  
     void clear_menu();
 
     void hide_num_of_players_menu_buttons();
 
-    void init_client_window();
+
+    void run_client_window();
 
     void clear_client_window();
 
