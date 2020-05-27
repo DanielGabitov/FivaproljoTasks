@@ -16,7 +16,7 @@ void Model::make_new_level() { //TODO - find other way to load game
     level_made = true, game_on = true;
     game_scene->add_background("images/background.jpg");
 
-    Utilities::LevelType level_type = game_scene->get_random_level_type();
+    Utilities::LevelType level_type = Utilities::LevelType::HSE;
 
     game_scene->print_level(level_type);
     game_scene->add_players(players_);

@@ -1,5 +1,7 @@
 #include <cassert>
 #include <cstring>
+#include <QDebug>
+
 #include "Server.h"
 
 namespace Inet {
@@ -294,8 +296,11 @@ Client::Client(u16 myPort) : socket_(myPort) {};
                 std::vector<float> positions;
                 for (int i = 0; i < 4 /*players amount multiplied by cord amount*/; i++){
                     float coordinate;
-                    memcpy(&packet[1 + i * sizeof(float)], (char *)&coordinate, sizeof(float));
+                    memcpy((char *)&coordinate, &packet[1 + i * sizeof(float)], sizeof(float));
                     positions.push_back(coordinate);
+                }
+                for (auto position : positions){
+                    qDebug() << position;
                 }
                 update_positions(positions);
             }

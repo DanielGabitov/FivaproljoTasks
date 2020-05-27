@@ -118,6 +118,9 @@ void Controller::connect_server() {
 void Controller::connect_client(unsigned short serverPort) {
     internetConnection = new Inet::Client();
     connection_type_ = Utilities::ConnectionType::CLIENT;
+    reinterpret_cast<Inet::Client *>(internetConnection)->setUpdatePositions(std::bind(&Controller::update_model_positions,
+                                                                                       this, std::placeholders::_1));
+
     while (!localId) {
         internetConnection->connect({127, 0, 0, 1, serverPort});
         localId = ::connect(static_cast<Inet::Client *>(internetConnection));
