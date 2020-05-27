@@ -80,7 +80,6 @@ void Controller::set_inet_type() {
     std::cout << "Enter \'server\' or \'client\' or \'offline\'" << std::endl;
     std::cin >> inetType;
     if (inetType == "server") {
-        connection_type_ = Utilities::ConnectionType::SERVER;
         internetConnection = new Inet::Server();
         remoteClicker_ = new PlayerSelectionRemoteClicker(*player_selection, internetConnection);
     } else if (inetType == "client") {
@@ -110,6 +109,7 @@ void Controller::set_inet_type() {
 
 void Controller::connect_server() {
     internetConnection = new Inet::Server();
+    connection_type_ = Utilities::ConnectionType::SERVER;
     remoteClicker_ = new PlayerSelectionRemoteClicker(*player_selection, internetConnection);
     //if(smtn went wrong) return false;
     state_machine_->connection_result(Utilities::ConnectionResult::SERVER_SUCCESS);
@@ -117,6 +117,7 @@ void Controller::connect_server() {
 
 void Controller::connect_client(unsigned short serverPort) {
     internetConnection = new Inet::Client();
+    connection_type_ = Utilities::ConnectionType::CLIENT;
     while (!localId) {
         internetConnection->connect({127, 0, 0, 1, serverPort});
         localId = ::connect(static_cast<Inet::Client *>(internetConnection));
@@ -233,6 +234,7 @@ void Controller::update_clients_positions() {
     }
     qDebug() << "HERE!";
     reinterpret_cast<Inet::Server*>(internetConnection)->update_positions(position_data);
+    server_pos_updater->start(1000 / 6);
 }
 
 void Controller::update_model_positions(const std::vector<float> &positions) {
