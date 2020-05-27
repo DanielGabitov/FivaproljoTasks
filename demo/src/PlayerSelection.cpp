@@ -21,7 +21,8 @@ void PlayerSelection::run_player_selection() {
 }
 
 void PlayerSelection::init_window() {
-    scene->add_background("images/black_color.jpg");
+ //   scene->add_background("images/black_color.jpg");
+    scene->add_background("images/background1.jpg");
     set_text();
     set_images();
     set_buttons();
@@ -94,10 +95,10 @@ void PlayerSelection::clear_player_selection() {
     }
     //players.clear();
     player_textures_index.clear();
-    for (int i = 0; i < MAX_NUM_OF_PLAYERS; i++) { 
-	for (auto button : buttons_player[i]) {
-	    button->hide();
-	}
+    for (int i = 0; i < MAX_NUM_OF_PLAYERS; i++) {
+        for (auto button : buttons_player[i]) {
+            button->hide();
+        }
     }
 }
 
@@ -113,7 +114,7 @@ void PlayerSelection::set_buttons() {
 /*
  * Changes texture of selected player when button @Customize is clicked.
  */
-void PlayerSelection::change_image(int player_number) {
+void PlayerSelection::change_image_impl(int player_number) {
     player_textures_index[player_number - 1] = (player_textures_index[player_number - 1] + 1) % available_skins.size();
     player_textures[player_number - 1]->setPixmap(
             QPixmap(available_skins[
@@ -121,11 +122,20 @@ void PlayerSelection::change_image(int player_number) {
                     scaled(200, 200));
 }
 
+
+void PlayerSelection::change_image(int player_number) {
+    if (sendClick_) {
+        sendClick_(Utilities::ButtonPurpose::CUSTOMIZE);
+        std::cout << "sendClick_ int change_image, id: " << id_ << std::endl;
+    }
+    change_image_impl(player_number);
+}
+
 /*
  * Increases the number of players that are ready, when one clicks @Ready button.
  * When all players are ready, starts level.
  */
-void PlayerSelection::increase_ready_num(int player_number) {
+void PlayerSelection::increase_ready_num_impl(int player_number) {
     if (++num_of_ready == num_of_players) {
         for (int i = 0; i < num_of_players; i++) {
             players[i]->set_player_skin(available_skins[player_textures_index[i]]);
@@ -133,19 +143,33 @@ void PlayerSelection::increase_ready_num(int player_number) {
         clear_player_selection();
         emit start_level();
     } else {
-	customize_player[player_number - 1]->hide();
-	ready_player[player_number - 1]->hide();
-	back_player[player_number - 1]->show();
+        customize_player[player_number - 1]->hide();
+        ready_player[player_number - 1]->hide();
+        back_player[player_number - 1]->show();
     }
+}
+
+void PlayerSelection::increase_ready_num(int player_number) {
+    if (sendClick_) {
+        sendClick_(Utilities::ButtonPurpose::READY);
+    }
+    increase_ready_num_impl(player_number);
 }
 /*
  * Decreases the number of players that are ready, when @Back is clicked.
  */
-void PlayerSelection::decrease_ready_num(int player_number) {
+void PlayerSelection::decrease_ready_num_impl(int player_number) {
     --num_of_ready;
     customize_player[player_number - 1]->show();
     ready_player[player_number - 1]->show();
     back_player[player_number - 1]->hide();
+}
+
+void PlayerSelection::decrease_ready_num(int player_number) {
+    if (sendClick_) {
+        sendClick_(Utilities::ButtonPurpose::BACK);
+    }
+    decrease_ready_num_impl(player_number);
 }
 
 /*
@@ -157,17 +181,17 @@ void PlayerSelection::decrease_ready_num(int player_number) {
 void PlayerSelection::set_buttons_player(int index, int xPos) {
     customize_player[index] = new QPushButton("Customize");
     customize_player[index]->setGeometry(QRect(QPoint(xPos, 460),
-                                         QSize(200, 50)));
-    connect(customize_player[index], &QPushButton::clicked, [=] { change_image(index + 1); });
+                                               QSize(200, 50)));
+    connect(customize_player[index], &QPushButton::clicked, this, [=] { change_image(index + 1); });
 
     ready_player[index] = new QPushButton("Ready");
     ready_player[index]->setGeometry(QRect(QPoint(xPos, 520),
-                                     QSize(200, 50)));
+                                           QSize(200, 50)));
     connect(ready_player[index], &QPushButton::clicked, this, [=] { increase_ready_num(index + 1); });
 
     back_player[index] = new QPushButton("Back");
     back_player[index]->setGeometry(QRect(QPoint(xPos, 580),
-                                    QSize(200, 50)));
+                                          QSize(200, 50)));
     connect(back_player[index], &QPushButton::clicked, this, [=] { decrease_ready_num(index + 1); });
     back_player[index]->hide();
 
@@ -179,3 +203,27 @@ void PlayerSelection::set_buttons_player(int index, int xPos) {
     scene->add_button(ready_player[index]);
     scene->add_button(back_player[index]);
 }
+
+
+PlayerSelectionRemoteClicker::PlayerSelectionRemoteClicker(PlayerSelection &ps, Inet::InternetConnection *inet)
+        : ps_(ps), inetConnection_(inet) {
+    using namespace std::placeholders;
+    inetConnection_->setClick(std::bind(&PlayerSelectionRemoteClicker::click, this, _1, _2));
+    ps_.sendClick_ = std::bind(&PlayerSelectionRemoteClicker::sendClick, this, _1);
+    ps_.id_ = inetConnection_->id();
+}
+
+void PlayerSelectionRemoteClicker::click(int id, Utilities::ButtonPurpose purpose) {
+    if (purpose == Utilities::ButtonPurpose::CUSTOMIZE) {
+        ps_.change_image_impl(id + 1);
+    } else if (purpose == Utilities::ButtonPurpose::READY) {
+        ps_.increase_ready_num_impl(id + 1);
+    } else if (purpose == Utilities::ButtonPurpose::BACK) {
+        ps_.decrease_ready_num_impl(id + 1);
+    }
+}
+
+void PlayerSelectionRemoteClicker::sendClick(Utilities::ButtonPurpose purpose) {
+    inetConnection_->send(inetConnection_->buildPacket(purpose).data());
+}
+

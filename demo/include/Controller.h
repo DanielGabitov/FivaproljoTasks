@@ -30,7 +30,7 @@ public:
 public slots:
     void commit();
     void advance();
-    
+
 private:
     QTimer *timer = new QTimer(this);
     Inet::InternetConnection *&inetConnection_;
@@ -48,6 +48,12 @@ public:
 
     void run_player_selection();
 
+    void connect_server();
+
+    void connect_client(unsigned short serverPort);
+
+    void update_model_positions(const std::vector<float> &positions);
+
 private slots:
 //the name suggests that amount of players can be changed - for now this feature is not supported
     void set_num_of_players_for_lvl(Utilities::GameNumOfPlayers num);
@@ -59,6 +65,9 @@ private slots:
     void run_level(Utilities::GameMode mode);
 
     void set_inet_type();
+
+    void update_clients_positions();
+
 
 signals:
 
@@ -79,5 +88,9 @@ private:
     std::vector<Player *> players_;
     PlayerSelection *player_selection = nullptr;
     ConnectionUpdater *connUpd_ = nullptr;
+    PlayerSelectionRemoteClicker *remoteClicker_ = nullptr;
     int localId = 0;
+
+    Utilities::ConnectionType connection_type_ = Utilities::ConnectionType::OFFLINE;
+    QTimer *server_pos_updater;
 };

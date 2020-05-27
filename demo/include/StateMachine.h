@@ -21,6 +21,14 @@ public slots:
 
     void two_players_mode();
 
+    void connection_type();
+
+    void connect_server();
+
+    void connect_client();
+
+    void connection_result(Utilities::ConnectionResult result);
+
     void menu_mode();
 
 // will be called after choosing mode (choosing mode after player selection (perhaps(???) can be changed))
@@ -37,6 +45,18 @@ signals:
     void set_num_of_players(Utilities::GameNumOfPlayers num);
 
     void set_level(Utilities::GameMode mode);
+
+    void set_server_connection();
+
+    void set_client_connection();
+
+    void server_connection_success();
+
+    void server_connection_failure();
+
+    void client_connection_success();
+
+    void client_connection_failure();
 
     void set_menu_mode();
 

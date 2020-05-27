@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QAbstractAnimation>
+#include <QLineEdit>
 #include <QDebug>
 #include <QGraphicsView>
 #include <QWidget>
@@ -48,6 +49,8 @@ public:
     void addWidget(KeyPresser *pPresser);
 
     void add_text(QLabel *text);
+
+    void add_qlineedit(QLineEdit *box);
 
     void add_qgrectitem(QGraphicsRectItem *item);
 

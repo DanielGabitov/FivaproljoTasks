@@ -3,10 +3,10 @@
 #include <QGraphicsView>
 #include <QLabel>
 #include <vector>
-#include <functional>
-
 #include "Player.h"
 #include "Scene.h"
+#include "Server.h"
+#include "Utilities.h"
 
 /*
  * For player selection new window is created in the beginning of the game.
@@ -15,7 +15,7 @@
  */
 
 class PlayerSelection : public QObject {
-    Q_OBJECT;
+Q_OBJECT;
 public:
     PlayerSelection(Scene *scene);
     ~PlayerSelection() override;
@@ -36,10 +36,13 @@ public slots:
     void decrease_ready_num(int player_number);
 
 signals:
-
     void start_level();
 
 private:
+    void change_image_impl(int player_number);
+    void increase_ready_num_impl(int player_number);
+    void decrease_ready_num_impl(int player_number);
+
     Scene *scene;
     bool initialized = false;
     static constexpr int MAX_NUM_OF_PLAYERS = 4;
@@ -58,4 +61,21 @@ private:
     int num_of_players = 0;
     int num_of_ready = 0;
     std::vector<Player *> players;
+
+    std::function<void(Utilities::ButtonPurpose)> sendClick_;
+    int id_ = -1;
+
+    friend class PlayerSelectionRemoteClicker;
+};
+
+class PlayerSelectionRemoteClicker {
+public:
+    PlayerSelectionRemoteClicker(PlayerSelection &ps, Inet::InternetConnection *inet);
+
+    void click(int id, Utilities::ButtonPurpose purpose);
+    void sendClick(Utilities::ButtonPurpose purpose);
+
+private:
+    PlayerSelection &ps_;
+    Inet::InternetConnection *inetConnection_;
 };

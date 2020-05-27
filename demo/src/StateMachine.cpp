@@ -22,10 +22,33 @@ void StateMachine::two_players_mode() {
     prev_state = current_state;
     current_state = Utilities::GameState::PLAYER_SELECTION;
     current_num = Utilities::GameNumOfPlayers::TWO_PLAYERS;
-    emit set_inet_type();
-    emit begin_connection_upd();
     emit set_num_of_players(Utilities::GameNumOfPlayers::TWO_PLAYERS);
 }
+
+void StateMachine::connection_type() {
+    prev_state = current_state;
+    current_state = Utilities::GameState::MENU_INET_TYPE;
+    emit set_inet_type();
+    emit begin_connection_upd();
+}
+
+void StateMachine::connection_result(Utilities::ConnectionResult result) {
+    switch (result) {
+        case Utilities::ConnectionResult::SERVER_SUCCESS :
+            emit server_connection_success();
+            break;
+        case Utilities::ConnectionResult::SERVER_FAILURE:
+            emit server_connection_failure();
+            break;
+        case Utilities::ConnectionResult::CLIENT_SUCCESS:
+            emit client_connection_success();
+            break;
+        case Utilities::ConnectionResult::CLIENT_FAILURE:
+            emit client_connection_failure();
+            break;
+    }
+}
+
 
 void StateMachine::exit_game() {
     current_state = Utilities::GameState::EXIT;
@@ -54,4 +77,12 @@ void StateMachine::menu_mode() {
     prev_state = current_state;
     current_state = Utilities::GameState::MENU_MODE;
     emit set_menu_mode();
+}
+
+void StateMachine::connect_server() {
+    emit set_server_connection();
+}
+
+void StateMachine::connect_client() {
+    emit set_client_connection();
 }

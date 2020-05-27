@@ -23,14 +23,14 @@ void Block::change_color(Utilities::Color color) {
     QObject::connect(recolor_timer_, SIGNAL(timeout()), this, SLOT(change_color_helper_()));
     switch (color) {
         case Utilities::Color::GREEN:
-            next_texture_.push("images/white_block.jpg");
-            next_texture_.push("images/green_block1.jpg");
-            next_texture_.push("images/green_block.jpg");
+            //next_texture_.push("images/white_block.jpg");
+         //   next_texture_.push("images/green_block1.jpg");
+            next_texture_.push("images/ex_block2.jpg");
             break;
         case Utilities::Color::YELLOW:
-            next_texture_.push("images/white_block.jpg");
-            next_texture_.push("images/orange_block1.jpg");
-            next_texture_.push("images/orange_block.jpg");
+          //  next_texture_.push("images/white_block.jpg");
+         //   next_texture_.push("images/orange_block1.jpg");
+            next_texture_.push("images/ex_block1.jpg");
             break;
         default:
             break;

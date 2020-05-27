@@ -9,7 +9,7 @@
 using namespace Inet;
 
 KeyPresser::KeyPresser(InternetConnection *& inetConnection)
-    : inetConnection_(inetConnection) {
+        : inetConnection_(inetConnection) {
     setWindowOpacity(0.0);
     setFocus();
 }
@@ -90,11 +90,11 @@ void KeyPresser::deactivate(KeyPresserUtility::ManipulatorType type) {
 }
 
 KeyPresser::Key::Key(Qt::Key qt_name)
-    : qt_name_(qt_name)
+        : qt_name_(qt_name)
 {}
 
 KeyPresser::Key::Key(Utilities::Direction dir)
-    : dir_(dir)
+        : dir_(dir)
 {}
 
 KeyPresser::Key::operator Qt::Key() const {
@@ -120,8 +120,8 @@ void KeyPresser::Key::release() {
 KeyPresser::Manipulator::~Manipulator() {}
 
 KeyPresser::Manipulator::Manipulator(bool is_active, KeyPresserUtility::ManipulatorType manip_type)
-    : is_active_(is_active)
-    , manip_type_(manip_type)
+        : is_active_(is_active)
+        , manip_type_(manip_type)
 {}
 
 bool KeyPresser::Manipulator::active() const {
@@ -164,12 +164,12 @@ void KeyPresser::MenuManipulator::release(Qt::Key k) {}
 */
 KeyPresser::PlayerManipulator::PlayerManipulator(Player *player, Qt::Key up_key, Qt::Key left_key,
                                                  Qt::Key down_key, Qt::Key right_key)
-    : Manipulator(true, KeyPresserUtility::ManipulatorType::PLAYER)
-    , player_(player)
-    , UP(up_key)
-    , LEFT(left_key)
-    , DOWN(down_key)
-    , RIGHT(right_key)
+        : Manipulator(true, KeyPresserUtility::ManipulatorType::PLAYER)
+        , player_(player)
+        , UP(up_key)
+        , LEFT(left_key)
+        , DOWN(down_key)
+        , RIGHT(right_key)
 {}
 
 KeyPresser::PlayerManipulator::~PlayerManipulator() {}
@@ -218,14 +218,12 @@ void KeyPresser::PlayerManipulator::release(Qt::Key k) {
 }
 
 KeyPresser::InetPlayerManipulator::InetPlayerManipulator(Player *player, InternetConnection *inetConnection)
-    : player_(player)
-    , inetConnection_(inetConnection) {
-    std::cout << "MMMM" << std::endl;
+        : player_(player)
+        , inetConnection_(inetConnection) {
     inetConnection_->setPress(std::bind(&KeyPresser::InetPlayerManipulator::press,
                                         this, std::placeholders::_1));
     inetConnection_->setRelease(std::bind(&KeyPresser::InetPlayerManipulator::release,
-                                        this, std::placeholders::_1));
-    // Какую-нибудь дичь с таймером....
+                                          this, std::placeholders::_1));
 }
 
 void KeyPresser::InetPlayerManipulator::press(Utilities::Direction dir) {
