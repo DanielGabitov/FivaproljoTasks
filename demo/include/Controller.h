@@ -49,11 +49,11 @@ public:
     void run_player_selection();
 
     void connect_server();
-
+  
     void connect_client(unsigned short serverPort);
 
     void update_model_positions(const std::vector<float> &positions);
-
+  
 private slots:
 //the name suggests that amount of players can be changed - for now this feature is not supported
     void set_num_of_players_for_lvl(Utilities::GameNumOfPlayers num);
@@ -64,7 +64,6 @@ private slots:
 
     void run_level(Utilities::GameMode mode);
 
-    void set_inet_type();
 
     void update_clients_positions();
 
@@ -72,8 +71,6 @@ private slots:
 signals:
 
     void set_run_level();
-
-    //void set_player_selection();
 
 private:
     Application app;

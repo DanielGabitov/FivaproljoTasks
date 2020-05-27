@@ -51,9 +51,9 @@ private:
     std::vector<QLabel *> player_num;
 
     std::vector<QPushButton *> buttons_player[MAX_NUM_OF_PLAYERS];
-    QPushButton *customize_player[MAX_NUM_OF_PLAYERS];
-    QPushButton *ready_player[MAX_NUM_OF_PLAYERS];
-    QPushButton *back_player[MAX_NUM_OF_PLAYERS];
+    QPushButton *customize_player[MAX_NUM_OF_PLAYERS] = { [0 ... MAX_NUM_OF_PLAYERS - 1] = nullptr };
+    QPushButton *ready_player[MAX_NUM_OF_PLAYERS] = { [0 ... MAX_NUM_OF_PLAYERS - 1] = nullptr };
+    QPushButton *back_player[MAX_NUM_OF_PLAYERS] = { [0 ... MAX_NUM_OF_PLAYERS - 1] = nullptr };
 
     std::vector<QString> available_skins{"images/demo_player.png", "images/demo_player_2.png"};
     std::vector<QGraphicsPixmapItem *> player_textures;

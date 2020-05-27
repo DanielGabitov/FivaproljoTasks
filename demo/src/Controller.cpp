@@ -26,16 +26,13 @@ Controller::~Controller() {
 
 void ConnectionUpdater::commit() {
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(advance()));
-    std::cout << "cyka" << std::endl;
     timer->start(10);
     timer->setInterval(16);
-    std::cout << "OAOAO" << std::endl;
 }
 
 void ConnectionUpdater::advance() {
     if (inetConnection_) {
         inetConnection_->receive();
-        // std::cout << "YESS" << std::endl;
     } else {
         // std::cout << "NOOO" << std::endl;
     }
@@ -44,9 +41,8 @@ void ConnectionUpdater::advance() {
 Controller::Controller(int argc, char *argv[])
         : app(argc, argv), scene_(new Scene()), key_presser_(new KeyPresser(internetConnection)),
           state_machine_(new StateMachine()), model_(new Model(scene_, state_machine_)),
-          menu_(new Menu(scene_, state_machine_))
-        // , key_presser_helper_(new KeyPresserHelper(key_presser_))
-        , player_selection(new PlayerSelection(scene_)), connUpd_(new ConnectionUpdater(internetConnection)) {
+          menu_(new Menu(scene_, state_machine_)), player_selection(new PlayerSelection(scene_)),
+          connUpd_(new ConnectionUpdater(internetConnection)) {
     key_presser_->setFixedSize(QSize(scene_->get_width(), scene_->get_height()));
     scene_->addWidget(key_presser_);
     connect(state_machine_, &StateMachine::set_num_of_players, this, &Controller::set_num_of_players_for_lvl);
@@ -54,7 +50,6 @@ Controller::Controller(int argc, char *argv[])
     connect(player_selection, &PlayerSelection::start_level, state_machine_, &StateMachine::start_level);
     connect(state_machine_, &StateMachine::set_level, this, &Controller::run_level);
     connect(state_machine_, &StateMachine::set_end_level, this, &Controller::end_level);
-    //  connect(state_machine_, &StateMachine::set_inet_type, this, &Controller::set_inet_type);
     connect(state_machine_, &StateMachine::set_client_connection, this,
             [=] { connect_client(menu_->get_server_port()); });
     connect(state_machine_, &StateMachine::server_connection_success, state_machine_, &StateMachine::two_players_mode);
@@ -73,38 +68,6 @@ static int connect(Inet::Client *client) { // ждет ответного пак
         usleep(160);
     }
     return client->id();
-}
-
-void Controller::set_inet_type() {
-    std::string inetType;
-    std::cout << "Enter \'server\' or \'client\' or \'offline\'" << std::endl;
-    std::cin >> inetType;
-    if (inetType == "server") {
-        internetConnection = new Inet::Server();
-        remoteClicker_ = new PlayerSelectionRemoteClicker(*player_selection, internetConnection);
-    } else if (inetType == "client") {
-        connection_type_ = Utilities::ConnectionType::CLIENT;
-        internetConnection = new Inet::Client();
-        reinterpret_cast<Inet::Client *>(internetConnection)->setUpdatePositions(std::bind(&Controller::update_model_positions,
-                                                                                           this, std::placeholders::_1));
-        while (!localId) {
-            std::cout << "Enter server port: ";
-            unsigned short serverPort;
-            std::cin >> serverPort;
-            internetConnection->connect({127, 0, 0, 1, serverPort});
-            localId = ::connect(static_cast<Inet::Client *>(internetConnection));
-            if (!localId) {
-                std::cout << "Could not connect. ";
-            }
-            remoteClicker_ = new PlayerSelectionRemoteClicker(*player_selection, internetConnection);
-        }
-    } else if (inetType == "offline") {
-        connection_type_ = Utilities::ConnectionType::OFFLINE;
-        // nu, bivaet, delat' niche ne nado
-    } else {
-        std::cout << "Are you stupid? it's not server or client or offline, asshole" << std::endl;
-        assert(false);
-    }
 }
 
 void Controller::connect_server() {
@@ -185,13 +148,10 @@ void Controller::run_player_selection() {
 void Controller::run_level(Utilities::GameMode mode) {
     if (state_machine_->get_prev_state() == Utilities::GameState::PLAYER_SELECTION) {
         player_selection->clear_player_selection();
-        menu_->clear_menu();
-        qDebug() << "oaoaoaoa";
+       // menu_->clear_menu();
     } else if (state_machine_->get_prev_state() == Utilities::GameState::LEVEL_STATISTICS) {
         model_->clear_level();
     }
-
-    // player_selection->clear_player_selection();
     menu_->clear_menu();
     model_->add_players(players_);
     model_->set_statistics();

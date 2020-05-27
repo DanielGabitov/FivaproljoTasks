@@ -123,7 +123,7 @@ namespace Inet {
         return packet;
     }
 
-Server::Server(u16 port) : socket_(port) {}
+    Server::Server(u16 port) : socket_(port) {}
 
     int Server::id() const {
         return 0;
@@ -195,11 +195,11 @@ Server::Server(u16 port) : socket_(port) {}
             } else if (packet[0] == 3) {
                 if (InternetConnection::click) {
                     if (packet[1] == 1) {
-                        InternetConnection::click(0, Utilities::ButtonPurpose::CUSTOMIZE);
+                        InternetConnection::click(1, Utilities::ButtonPurpose::CUSTOMIZE);
                     } else if (packet[1] == 2) {
-                        InternetConnection::click(0, Utilities::ButtonPurpose::READY);
+                        InternetConnection::click(1, Utilities::ButtonPurpose::READY);
                     } else if (packet[1] == 3) {
-                        InternetConnection::click(0, Utilities::ButtonPurpose::BACK);
+                        InternetConnection::click(1, Utilities::ButtonPurpose::BACK);
                     }
                 }
             }
@@ -285,11 +285,11 @@ Client::Client(u16 myPort) : socket_(myPort) {};
             } else if (packet[0] == 3) {
                 if (InternetConnection::click) {
                     if (packet[1] == 1) {
-                        InternetConnection::click(id_, Utilities::ButtonPurpose::CUSTOMIZE);
+                        InternetConnection::click(0, Utilities::ButtonPurpose::CUSTOMIZE);
                     } else if (packet[1] == 2) {
-                        InternetConnection::click(id_, Utilities::ButtonPurpose::READY);
+                        InternetConnection::click(0, Utilities::ButtonPurpose::READY);
                     } else if (packet[1] == 3) {
-                        InternetConnection::click(id_, Utilities::ButtonPurpose::BACK);
+                        InternetConnection::click(0, Utilities::ButtonPurpose::BACK);
                     }
                 }
             } else if (packet[0] == 4){
