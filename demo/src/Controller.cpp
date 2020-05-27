@@ -196,7 +196,7 @@ void Controller::run_level(Utilities::GameMode mode) {
 
     if (connection_type_ == Utilities::ConnectionType::SERVER){
         server_pos_updater = new QTimer(this);
-        connect(level_durance, SIGNAL(timeout()), this, SLOT(update_clients_positions()));
+        connect(server_pos_updater, SIGNAL(timeout()), this, SLOT(update_clients_positions()));
         server_pos_updater->start(1000 / 6);
     }
 
@@ -231,7 +231,7 @@ void Controller::update_clients_positions() {
         position_data.push_back(pos.x());
         position_data.push_back(pos.y());
     }
-
+    qDebug() << "HERE!";
     reinterpret_cast<Inet::Server*>(internetConnection)->update_positions(position_data);
 }
 
