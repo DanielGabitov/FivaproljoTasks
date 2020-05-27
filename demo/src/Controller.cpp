@@ -237,7 +237,7 @@ void Controller::update_clients_positions() {
     }
     qDebug() << "HERE!";
     reinterpret_cast<Inet::Server*>(internetConnection)->update_positions(position_data);
-    server_pos_updater->start(1000 / 6);
+    server_pos_updater->start(1000 / 3);
 }
 
 void Controller::update_model_positions(const std::vector<float> &positions) {
