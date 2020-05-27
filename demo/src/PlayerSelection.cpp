@@ -155,12 +155,6 @@ void PlayerSelection::increase_ready_num(int player_number) {
     increase_ready_num_impl(player_number);
 }
 
-void PlayerSelection::increase_ready_num(int player_number) {
-    if (sendClick_) {
-        sendClick_(Utilities::ButtonPurpose::READY);
-    }
-    increase_ready_num_impl(player_number);
-}
 /*
  * Decreases the number of players that are ready, when @Back is clicked.
  */
